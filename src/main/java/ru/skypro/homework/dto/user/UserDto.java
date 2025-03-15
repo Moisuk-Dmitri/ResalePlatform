@@ -1,15 +1,15 @@
-package ru.skypro.homework.dto;
+package ru.skypro.homework.dto.user;
 
 import lombok.Data;
 
 @Data
-public class GetUserDto {
+public class UserDto {
 
-    private int id;
+    private Integer id;
     private String email;
     private String firstName;
     private String lastName;
     private String phone;
-    private Role USER;
     private String image;
 }
+
