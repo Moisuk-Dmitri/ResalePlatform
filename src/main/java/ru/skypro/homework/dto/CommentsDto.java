@@ -6,10 +6,10 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class Comments {
+public class CommentsDto {
 
     @Schema(description = "общее количество комментариев")
     private int count;
-    List<Comment> results;
+    List<CommentDto> results;
 
 }

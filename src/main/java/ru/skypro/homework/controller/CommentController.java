@@ -10,9 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.Comment;
-import ru.skypro.homework.dto.Comments;
-import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.dto.CommentDto;
+import ru.skypro.homework.dto.CommentsDto;
+import ru.skypro.homework.dto.CreateOrUpdateCommentDto;
 import ru.skypro.homework.service.CommentService;
 
 @RestController
@@ -47,7 +47,7 @@ public class CommentController {
 
     )
     @GetMapping("{id}/comments")
-    public ResponseEntity<Comments> getComments(@PathVariable("id") int id) {
+    public ResponseEntity<CommentsDto> getComments(@PathVariable("id") int id) {
         if (commentService.getComment(id)) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).build();
         } else {
@@ -60,7 +60,7 @@ public class CommentController {
             summary = "Добавление комментария к объявлению",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
-                            schema = @Schema(implementation = CreateOrUpdateComment.class)
+                            schema = @Schema(implementation = CreateOrUpdateCommentDto.class)
                     )
             ),
             parameters = {
@@ -85,7 +85,7 @@ public class CommentController {
 
     )
     @PostMapping("{id}/comments")
-    public ResponseEntity<Comment> postComment(@PathVariable("id") int id, @RequestBody String text) {
+    public ResponseEntity<CommentDto> postComment(@PathVariable("id") int id, @RequestBody String text) {
         if (commentService.postComment(id, text)) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).build();
         } else {
@@ -138,7 +138,7 @@ public class CommentController {
             summary = "Обновление комментария",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
-                            schema = @Schema(implementation = CreateOrUpdateComment.class)
+                            schema = @Schema(implementation = CreateOrUpdateCommentDto.class)
                     )
             ),
             parameters = {
