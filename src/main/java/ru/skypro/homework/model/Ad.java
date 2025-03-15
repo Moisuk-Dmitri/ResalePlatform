@@ -1,7 +1,6 @@
 package ru.skypro.homework.model;
 
 import javax.persistence.*;
-import javax.validation.constraints.Pattern;
 import java.util.Objects;
 
 @Entity
@@ -9,7 +8,7 @@ import java.util.Objects;
 public class Ad {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int pk;
 
     private String title;
@@ -19,12 +18,12 @@ public class Ad {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
-    private User author;
+    private UserData author;
 
     public Ad() {
     }
 
-    public Ad(int pk, String title, String description, String image, int price, User author) {
+    public Ad(int pk, String title, String description, String image, int price, UserData author) {
         this.pk = pk;
         this.title = title;
         this.description = description;
@@ -73,11 +72,11 @@ public class Ad {
         this.price = price;
     }
 
-    public User getAuthor() {
+    public UserData getAuthor() {
         return author;
     }
 
-    public void setAuthor(User author) {
+    public void setAuthor(UserData author) {
         this.author = author;
     }
 
