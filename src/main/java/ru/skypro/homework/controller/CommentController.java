@@ -16,11 +16,14 @@ import ru.skypro.homework.dto.comment.CreateOrUpdateCommentDto;
 import ru.skypro.homework.service.CommentService;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("ads")
 public class CommentController {
 
     private final CommentService commentService;
+
+    public CommentController(CommentService commentService) {
+        this.commentService = commentService;
+    }
 
     @Operation(
             tags = "Комментарии",

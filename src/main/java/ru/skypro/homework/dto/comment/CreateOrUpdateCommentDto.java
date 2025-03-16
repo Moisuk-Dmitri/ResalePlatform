@@ -9,4 +9,18 @@ public class CreateOrUpdateCommentDto {
     @Schema(minLength = 8, maxLength = 64, description = "текст комментария")
     private String text;
 
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    @Override
+    public String toString() {
+        return "CreateOrUpdateCommentDto{" +
+                "text='" + text + '\'' +
+                '}';
+    }
 }

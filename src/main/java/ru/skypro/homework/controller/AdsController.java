@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.ad.AdDto;
 import ru.skypro.homework.dto.ad.Ads;
-import ru.skypro.homework.dto.ad.CreateOrUpdateAd;
+import ru.skypro.homework.dto.ad.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ad.ExtendedAd;
 
 import java.io.IOException;
@@ -92,7 +92,7 @@ public class AdsController {
             )
     )
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createAd(@RequestPart CreateOrUpdateAd properties, @RequestParam MultipartFile image) throws IOException {
+    public ResponseEntity<?> createAd(@RequestPart CreateOrUpdateAdDto properties, @RequestParam MultipartFile image) throws IOException {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -210,7 +210,7 @@ public class AdsController {
             )
     })
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateAd(@PathVariable Integer id, @RequestBody CreateOrUpdateAd ad) {
+    public ResponseEntity<?> updateAd(@PathVariable Integer id, @RequestBody CreateOrUpdateAdDto ad) {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

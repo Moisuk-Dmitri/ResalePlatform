@@ -13,7 +13,7 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
-    private UserData author;
+    private User author;
 
     private String text;
     private long createdAt;
@@ -21,7 +21,7 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(int pk, UserData author, String text, long createdAt) {
+    public Comment(int pk, User author, String text, long createdAt) {
         this.pk = pk;
         this.author = author;
         this.text = text;
@@ -36,11 +36,11 @@ public class Comment {
         this.pk = pk;
     }
 
-    public UserData getAuthor() {
+    public User getAuthor() {
         return author;
     }
 
-    public void setAuthor(UserData author) {
+    public void setAuthor(User author) {
         this.author = author;
     }
 

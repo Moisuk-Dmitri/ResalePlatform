@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "user_data")
-public class UserData {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,10 +45,13 @@ public class UserData {
     @OneToMany(mappedBy = "author")
     private Set<Ad> ads = new HashSet<>();
 
-    public UserData() {
+    //добавил image
+    private String image;
+
+    public User() {
     }
 
-    public UserData(int id, String username, String password, String firstName, String lastName, String phone, String email, Role role) {
+    public User(int id, String username, String password, String firstName, String lastName, String phone, String email, Role role, String image) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -57,6 +60,7 @@ public class UserData {
         this.phone = phone;
         this.email = email;
         this.role = role;
+        this.image = image;
     }
 
     public int getId() {
@@ -119,12 +123,20 @@ public class UserData {
         this.email = email;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
-        UserData userData = (UserData) object;
-        return id == userData.id && Objects.equals(username, userData.username) && Objects.equals(password, userData.password) && Objects.equals(firstName, userData.firstName) && Objects.equals(lastName, userData.lastName) && Objects.equals(phone, userData.phone) && Objects.equals(email, userData.email) && role == userData.role;
+        User user = (User) object;
+        return id == user.id && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(phone, user.phone) && Objects.equals(email, user.email) && role == user.role;
     }
 
     @Override

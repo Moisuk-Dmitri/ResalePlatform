@@ -21,10 +21,15 @@ import ru.skypro.homework.service.AuthService;
 @CrossOrigin(value = "http://localhost:3000")
 @Tag(name = "Авторизация")
 @RestController
-@RequiredArgsConstructor
+
 public class AuthorizationController {
 
     private final AuthService authService;
+
+    public AuthorizationController(AuthService authService) {
+        this.authService = authService;
+    }
+
     @Operation(
             summary = "Авторизация пользователя",
             tags = "Авторизация",

@@ -18,12 +18,12 @@ public class Ad {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
-    private UserData author;
+    private User author;
 
     public Ad() {
     }
 
-    public Ad(int pk, String title, String description, String image, int price, UserData author) {
+    public Ad(int pk, String title, String description, String image, int price, User author) {
         this.pk = pk;
         this.title = title;
         this.description = description;
@@ -72,11 +72,11 @@ public class Ad {
         this.price = price;
     }
 
-    public UserData getAuthor() {
+    public User getAuthor() {
         return author;
     }
 
-    public void setAuthor(UserData author) {
+    public void setAuthor(User author) {
         this.author = author;
     }
 
