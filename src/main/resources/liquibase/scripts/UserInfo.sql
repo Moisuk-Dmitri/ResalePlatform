@@ -31,3 +31,14 @@ CREATE TABLE comment
     author_id INTEGER NOT NULL,
     CONSTRAINT user_data_id foreign key (author_id) references user_data(id)
 );
+
+-- changeset dmitri:2
+ALTER TABLE comment
+   ADD ad_id INTEGER NOT NULL;
+
+ALTER TABLE comment
+   ADD CONSTRAINT ad_id foreign key (ad_id) references ad(pk);
+
+-- changeset dmitri:3
+ALTER TABLE user_data
+    ADD image TEXT NOT NULL;

@@ -5,6 +5,7 @@ import org.mapstruct.factory.Mappers;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.dto.comment.CommentDto;
 import ru.skypro.homework.dto.comment.CreateOrUpdateCommentDto;
+import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.model.Comment;
 import ru.skypro.homework.model.User;
 
@@ -12,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CommentMapperTest {
     private CommentMapper mapper = Mappers.getMapper(CommentMapper.class);
-    Comment comment = new Comment(1,new User(1,"Oleg24","123456","Oleg","Smagin","+79215600890","email@mail.ru", Role.USER,"112"),"t",1);
+    Comment comment = new Comment(1,new User(1,"Oleg24","123456","Oleg","Smagin","+79215600890","email@mail.ru", Role.USER,"112"),"t",1, new Ad());
 
     @Test
     void commentToCommentDto() {

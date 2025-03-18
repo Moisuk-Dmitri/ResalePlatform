@@ -18,14 +18,19 @@ public class Comment {
     private String text;
     private long createdAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ad_id", referencedColumnName = "pk", nullable = false)
+    private Ad ad;
+
     public Comment() {
     }
 
-    public Comment(int pk, User author, String text, long createdAt) {
+    public Comment(int pk, User author, String text, long createdAt, Ad ad) {
         this.pk = pk;
         this.author = author;
         this.text = text;
         this.createdAt = createdAt;
+        this.ad = ad;
     }
 
     public int getPk() {
@@ -60,17 +65,25 @@ public class Comment {
         this.createdAt = createdAt;
     }
 
+    public Ad getAd() {
+        return ad;
+    }
+
+    public void setAd(Ad ad) {
+        this.ad = ad;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Comment comment = (Comment) object;
-        return pk == comment.pk && createdAt == comment.createdAt && Objects.equals(author, comment.author) && Objects.equals(text, comment.text);
+        return pk == comment.pk && createdAt == comment.createdAt && Objects.equals(author, comment.author) && Objects.equals(text, comment.text) && Objects.equals(ad, comment.ad);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(pk, author, text, createdAt);
+        return Objects.hash(pk, author, text, createdAt, ad);
     }
 
     @Override
@@ -80,6 +93,7 @@ public class Comment {
                 ", author=" + author +
                 ", text='" + text + '\'' +
                 ", createdAt=" + createdAt +
+                ", ad=" + ad +
                 '}';
     }
 }

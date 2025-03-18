@@ -45,7 +45,6 @@ public class User {
     @OneToMany(mappedBy = "author")
     private Set<Ad> ads = new HashSet<>();
 
-    //добавил image
     private String image;
 
     public User() {

@@ -1,7 +1,9 @@
 package ru.skypro.homework.model;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "ad")
@@ -19,6 +21,9 @@ public class Ad {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
     private User author;
+
+    @OneToMany(mappedBy = "ad")
+    private Set<Comment> comments = new HashSet<>();
 
     public Ad() {
     }
@@ -80,17 +85,25 @@ public class Ad {
         this.author = author;
     }
 
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(Set<Comment> comments) {
+        this.comments = comments;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Ad ad = (Ad) object;
-        return pk == ad.pk && price == ad.price && Objects.equals(title, ad.title) && Objects.equals(description, ad.description) && Objects.equals(image, ad.image) && Objects.equals(author, ad.author);
+        return pk == ad.pk && price == ad.price && Objects.equals(title, ad.title) && Objects.equals(description, ad.description) && Objects.equals(image, ad.image) && Objects.equals(author, ad.author) && Objects.equals(comments, ad.comments);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(pk, title, description, image, price, author);
+        return Objects.hash(pk, title, description, image, price, author, comments);
     }
 
     @Override
@@ -102,7 +115,7 @@ public class Ad {
                 ", image='" + image + '\'' +
                 ", price=" + price +
                 ", author=" + author +
+                ", comments=" + comments +
                 '}';
     }
-
 }
