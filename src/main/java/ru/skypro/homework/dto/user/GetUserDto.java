@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.skypro.homework.dto.Role;
-
+/**
+ * Represents an object with authorized user's info: id, email, firstname, lastName, phone, role and image.
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data

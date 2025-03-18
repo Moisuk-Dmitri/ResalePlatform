@@ -24,6 +24,7 @@ import java.io.IOException;
  * This controller provides endpoints for advertisement operations.
  */
 @RestController
+@CrossOrigin(value = "http://localhost:3000")
 @RequestMapping("ads")
 @Slf4j
 @Tag(

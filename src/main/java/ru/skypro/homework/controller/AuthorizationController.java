@@ -17,19 +17,29 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.skypro.homework.dto.user.LoginDto;
 import ru.skypro.homework.service.AuthService;
 
+/**
+ * This controller provides endpoint for user's authorization.
+ */
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @Tag(name = "Авторизация")
 @RestController
 
 public class AuthorizationController {
-
     private final AuthService authService;
 
     public AuthorizationController(AuthService authService) {
         this.authService = authService;
     }
 
+    /**
+     * User's authorization
+     * @param loginDto User's DTO for authorization
+     * @return ResponseEntity containing the authorization status
+     * HTTP 200 (OK): authorization successful.
+     * HTTP 401 (Unauthorized): if authorization fails.
+     *
+     */
     @Operation(
             summary = "Авторизация пользователя",
             tags = "Авторизация",

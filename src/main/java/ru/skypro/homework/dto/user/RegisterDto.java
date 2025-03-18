@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.skypro.homework.dto.Role;
-
+/**
+ * Represents an object with data for registration - username, password, firstname, lastname, phone, role
+ */
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
