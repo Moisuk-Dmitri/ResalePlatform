@@ -1,9 +1,7 @@
 package ru.skypro.homework.model;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "ad")
@@ -23,7 +21,7 @@ public class Ad {
     private User author;
 
     @OneToMany(mappedBy = "ad")
-    private Set<Comment> comments = new HashSet<>();
+    private List<Comment> comments = new ArrayList<>();
 
     public Ad() {
     }
@@ -85,11 +83,11 @@ public class Ad {
         this.author = author;
     }
 
-    public Set<Comment> getComments() {
+    public List<Comment> getComments() {
         return comments;
     }
 
-    public void setComments(Set<Comment> comments) {
+    public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
 
