@@ -7,10 +7,9 @@ import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
 import ru.skypro.homework.model.User;
 
-public interface UserService {
+public interface UsersService {
 
     User findByUsername(String username);
-
 
     void setPassword(SetPasswordDto setPasswordDto);
 

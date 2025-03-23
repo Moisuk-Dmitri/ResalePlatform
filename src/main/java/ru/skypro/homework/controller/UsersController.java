@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,7 +14,8 @@ import ru.skypro.homework.dto.user.GetUserDto;
 import ru.skypro.homework.dto.user.SetPasswordDto;
 import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
-import ru.skypro.homework.service.UserService;
+import ru.skypro.homework.service.AuthService;
+import ru.skypro.homework.service.UsersService;
 
 import java.io.IOException;
 
@@ -24,7 +24,7 @@ import static ru.skypro.homework.security.Permissions.USER;
 /**
  * This controller provides endpoints for user's operations.
  */
-@Slf4j
+
 @RestController
 @CrossOrigin(value = "http://localhost:3000")
 @Tag(name = "Пользователи")
@@ -32,10 +32,10 @@ import static ru.skypro.homework.security.Permissions.USER;
 
 public class UsersController {
 
-    private final UserService userService;
+    private final UsersService usersService;
 
-    public UsersController(UserService userService) {
-        this.userService = userService;
+    public UsersController(UsersService usersService) {
+        this.usersService = usersService;
     }
 
     /**
@@ -73,7 +73,7 @@ public class UsersController {
     @PreAuthorize(USER)
     @PostMapping("/set_password")
     public ResponseEntity<?> setPassword(@RequestBody SetPasswordDto setPassword) {
-        userService.setPassword(setPassword);
+        usersService.setPassword(setPassword);
         return ResponseEntity.ok().build();
     }
 
@@ -107,7 +107,7 @@ public class UsersController {
     @PreAuthorize(USER)
     @GetMapping("/me")
     public ResponseEntity<GetUserDto> getUser() {
-        return ResponseEntity.ok(userService.getCurrentUserInfo());
+        return ResponseEntity.ok(usersService.getCurrentUserInfo());
     }
 
     /**
@@ -142,7 +142,7 @@ public class UsersController {
     )
     @PreAuthorize(USER)
     public ResponseEntity<UserDto> updateUser(@RequestBody UpdateUserDto updateUserDto) {
-        return ResponseEntity.ok(userService.updateUserInfo(updateUserDto));
+        return ResponseEntity.ok(usersService.updateUserInfo(updateUserDto));
     }
 
     /**
@@ -174,7 +174,7 @@ public class UsersController {
     @PreAuthorize(USER)
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateUserImage(@RequestParam("image") MultipartFile file) throws IOException {
-        userService.updateUserImage(file);
+        usersService.updateUserImage(file);
         return ResponseEntity.ok().build();
     }
 }

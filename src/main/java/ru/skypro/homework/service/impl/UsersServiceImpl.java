@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.user.GetUserDto;
@@ -14,14 +15,15 @@ import ru.skypro.homework.dto.user.UserDto;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.UserRepository;
-import ru.skypro.homework.service.UserService;
+import ru.skypro.homework.service.UsersService;
 import ru.skypro.homework.service.mappers.UserMapper;
 
-public class UserServiceImpl implements UserService {
+@Service
+public class UsersServiceImpl implements UsersService {
 
     private final UserRepository userRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UsersServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
