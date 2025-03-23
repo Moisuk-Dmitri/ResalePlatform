@@ -6,9 +6,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.service.UserService;
+
+import javax.transaction.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -18,7 +19,9 @@ public class MyUserDetailsService implements UserDetailsService {
     private final UserService userService;
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.findByUsername(username).orElseThrow(UserNotFoundException::new);
+        User user = userService.findByUsername(username);
+        return new UserSecurityDTO(user);
     }
 }
