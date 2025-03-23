@@ -8,14 +8,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.user.GetUserDto;
 import ru.skypro.homework.dto.user.SetPasswordDto;
 import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
+import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
+
+import static ru.skypro.homework.security.Permissions.USER;
 
 /**
  * This controller provides endpoints for user's operations.
@@ -28,8 +32,15 @@ import java.io.IOException;
 
 public class UsersController {
 
+    private final UserService userService;
+
+    public UsersController(UserService userService) {
+        this.userService = userService;
+    }
+
     /**
      * The endpoint for password updating
+     *
      * @param setPassword User's DTO for the password updating
      * @return ResponseEntity containing the password updating status
      * HTTP 200 (OK): password updating successful
@@ -59,17 +70,19 @@ public class UsersController {
 
             }
     )
+    @PreAuthorize(USER)
     @PostMapping("/set_password")
     public ResponseEntity<?> setPassword(@RequestBody SetPasswordDto setPassword) {
-        return ResponseEntity.ok(setPassword);
+        userService.setPassword(setPassword);
+        return ResponseEntity.ok().build();
     }
 
     /**
      * Getting information about the authorized user
+     *
      * @return ResponseEntity containing the created GetUserDto.
      * HTTP 200 (OK): with user's info
      * HTTP 400 (Unauthorized): if user is not authorized
-     *
      */
     @Operation(
             tags = "Пользователи",
@@ -91,17 +104,19 @@ public class UsersController {
             }
 
     )
+    @PreAuthorize(USER)
     @GetMapping("/me")
     public ResponseEntity<GetUserDto> getUser() {
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(userService.getCurrentUserInfo());
     }
+
     /**
      * Updating information about the authorized user
+     *
      * @param updateUserDto user's DTO for updating authorized user's info
      * @return ResponseEntity containing the updating status
      * HTTP 200 (OK): updating successful
      * HTTP 400 (Unauthorized): if user is not authorized
-     *
      */
     @PatchMapping("/me")
     @Operation(
@@ -125,17 +140,18 @@ public class UsersController {
                             description = "Unauthorized")
             }
     )
+    @PreAuthorize(USER)
     public ResponseEntity<UserDto> updateUser(@RequestBody UpdateUserDto updateUserDto) {
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(userService.updateUserInfo(updateUserDto));
     }
 
     /**
      * Updating user's avatar
-     * @return ResponseEntity containing the updating status
-     * @param file new avatar
-     * HTTP 200 (OK): updating successful
-     * HTTP 400 (Unauthorized): if user is not authorized
      *
+     * @param file new avatar
+     *             HTTP 200 (OK): updating successful
+     *             HTTP 400 (Unauthorized): if user is not authorized
+     * @return ResponseEntity containing the updating status
      */
     @Operation(
             tags = "Пользователи",
@@ -155,9 +171,10 @@ public class UsersController {
                             description = "Unauthorized")
             }
     )
+    @PreAuthorize(USER)
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateUserImage(@RequestParam("image") MultipartFile file) throws IOException {
-        return ResponseEntity.ok(null);
+        userService.updateUserImage(file);
+        return ResponseEntity.ok().build();
     }
-
 }
