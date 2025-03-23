@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.ad.AdDto;
@@ -19,6 +20,9 @@ import ru.skypro.homework.dto.ad.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ad.ExtendedAd;
 
 import java.io.IOException;
+
+import static ru.skypro.homework.security.Permissions.ADMIN;
+import static ru.skypro.homework.security.Permissions.USER;
 
 /**
  * This controller provides endpoints for advertisement operations.
@@ -64,6 +68,7 @@ public class AdsController {
                     array = @ArraySchema(schema = @Schema(implementation = Ads.class))
             )
     )
+    @PreAuthorize(USER)
     @GetMapping("/")
     public ResponseEntity<?> getAll() {
         return new ResponseEntity<>(HttpStatus.OK);
@@ -92,6 +97,7 @@ public class AdsController {
                     schema = @Schema(implementation = AdDto.class)
             )
     )
+    @PreAuthorize(USER)
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createAd(@RequestPart CreateOrUpdateAdDto properties, @RequestParam MultipartFile image) throws IOException {
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -130,6 +136,7 @@ public class AdsController {
                     description = "Not found"
             )
     })
+    @PreAuthorize(USER)
     @GetMapping("/{id}")
     public ResponseEntity<?> getAdInfo(@PathVariable("id") Integer id) {
         return new ResponseEntity<>(HttpStatus.OK);
@@ -166,6 +173,7 @@ public class AdsController {
                     description = "Not found"
             )
     })
+    @PreAuthorize(USER + " or " + ADMIN)
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAd(@PathVariable Integer id) {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -210,6 +218,7 @@ public class AdsController {
                     description = "Not found"
             )
     })
+    @PreAuthorize(USER + " or " + ADMIN)
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateAd(@PathVariable Integer id, @RequestBody CreateOrUpdateAdDto ad) {
         return new ResponseEntity<>(HttpStatus.OK);
