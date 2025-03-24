@@ -14,13 +14,17 @@ public interface UserMapper {
 
     RegisterDto userToRegisterDto(User user);
 
+    @Mapping(source = "username", target = "email")
+    User RegisterDtoToUser(RegisterDto registerDto);
+
     @Mapping(source = "password",target = "currentPassword")
     SetPasswordDto userToSetPasswordDto(User user);
-
 
     UpdateUserDto userToUpdateUserDto(User user);
 
     UserDto userToUserDto(User user);
+
+
 
 
 }
