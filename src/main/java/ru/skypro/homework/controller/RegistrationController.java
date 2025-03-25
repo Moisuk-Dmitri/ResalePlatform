@@ -20,7 +20,7 @@ import ru.skypro.homework.service.AuthService;
 @RestController
 @CrossOrigin(value = "http://localhost:3000")
 @Tag(name = "Регистрация")
-@RequestMapping("/register")
+
 public class RegistrationController {
 
     private final AuthService authService;

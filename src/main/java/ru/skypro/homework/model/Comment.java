@@ -8,7 +8,8 @@ import java.util.Objects;
 public class Comment {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_seq")
+    @SequenceGenerator(name = "comment_seq", allocationSize = 1)
     private int pk;
 
     @ManyToOne(fetch = FetchType.LAZY)

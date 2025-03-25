@@ -56,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             Comment comment = new Comment(
-                    userRepository.findByUsername(authentication.getName()).get(),
+                    userRepository.findByEmail(authentication.getName()).get(),
                     text,
                     new Date().getTime(),
                     adRepository.findById(id).get()

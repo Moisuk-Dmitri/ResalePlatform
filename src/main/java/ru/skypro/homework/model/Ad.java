@@ -8,7 +8,8 @@ import java.util.*;
 public class Ad {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ad_seq")
+    @SequenceGenerator(name = "ad_seq", allocationSize = 1)
     private int pk;
 
     private String title;

@@ -1,14 +1,16 @@
 package ru.skypro.homework.service.impl;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.user.GetUserDto;
 import ru.skypro.homework.dto.user.SetPasswordDto;
 import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
@@ -19,39 +21,35 @@ import ru.skypro.homework.service.UsersService;
 import ru.skypro.homework.service.mappers.UserMapper;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class UsersServiceImpl implements UsersService {
 
     private final UserRepository userRepository;
-
-    public UsersServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    private UserMapper mapper = Mappers.getMapper(UserMapper.class);
+    private final PasswordEncoder encoder;
+    private final UserMapper mapper;
 
     @Override
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
     }
 
     @Override
     public void setPassword(SetPasswordDto setPasswordDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            User user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()));
-            user.setPassword(setPasswordDto.getNewPassword());
-            userRepository.save(user);
-        } else {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
-        }
+        log.info("Change password for user {}", authentication.getName());
+        User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()));
+        setPasswordDto.setNewPassword(encoder.encode(setPasswordDto.getNewPassword()));
+        user.setPassword(setPasswordDto.getNewPassword());
+        userRepository.save(user);
     }
 
     @Override
-    public GetUserDto getCurrentUserInfo() {
+    public UserDto getCurrentUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            User user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()));
-            return mapper.userToGetUserDto(user);
+            User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()));
+            return mapper.userToUserDto(user);
         } else {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
         }
@@ -61,7 +59,7 @@ public class UsersServiceImpl implements UsersService {
     public UserDto updateUserInfo(UpdateUserDto updateUserDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            User user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()));
+            User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()));
             user.setFirstName(updateUserDto.getFirstName());
             user.setLastName(updateUserDto.getLastName());
             user.setPhone(updateUserDto.getPhone());
@@ -75,7 +73,7 @@ public class UsersServiceImpl implements UsersService {
     public void updateUserImage(MultipartFile file) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            User user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()));
+            User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()));
             user.setImage(file.toString());
         } else {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);

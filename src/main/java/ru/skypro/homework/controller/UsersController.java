@@ -10,11 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.user.GetUserDto;
 import ru.skypro.homework.dto.user.SetPasswordDto;
 import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
-import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.UsersService;
 
 import java.io.IOException;
@@ -28,7 +26,7 @@ import static ru.skypro.homework.security.Permissions.USER;
 @RestController
 @CrossOrigin(value = "http://localhost:3000")
 @Tag(name = "Пользователи")
-@RequestMapping("/users")
+
 
 public class UsersController {
 
@@ -71,7 +69,7 @@ public class UsersController {
             }
     )
     @PreAuthorize(USER)
-    @PostMapping("/set_password")
+    @PostMapping("users/set_password")
     public ResponseEntity<?> setPassword(@RequestBody SetPasswordDto setPassword) {
         usersService.setPassword(setPassword);
         return ResponseEntity.ok().build();
@@ -94,7 +92,7 @@ public class UsersController {
                             description = "OK",
                             content = @Content(
                                     mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = GetUserDto.class)
+                                    schema = @Schema(implementation = UserDto.class)
                             )
                     ),
                     @ApiResponse(
@@ -105,8 +103,8 @@ public class UsersController {
 
     )
     @PreAuthorize(USER)
-    @GetMapping("/me")
-    public ResponseEntity<GetUserDto> getUser() {
+    @GetMapping("users/me")
+    public ResponseEntity<UserDto> getUser() {
         return ResponseEntity.ok(usersService.getCurrentUserInfo());
     }
 
@@ -118,7 +116,7 @@ public class UsersController {
      * HTTP 200 (OK): updating successful
      * HTTP 400 (Unauthorized): if user is not authorized
      */
-    @PatchMapping("/me")
+    @PatchMapping("users/me")
     @Operation(
             tags = "Пользователи",
             summary = "Обновление информации об авторизованном пользователе",
@@ -172,7 +170,7 @@ public class UsersController {
             }
     )
     @PreAuthorize(USER)
-    @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "users/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateUserImage(@RequestParam("image") MultipartFile file) throws IOException {
         usersService.updateUserImage(file);
         return ResponseEntity.ok().build();

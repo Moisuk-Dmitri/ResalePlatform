@@ -7,9 +7,6 @@ import ru.skypro.homework.model.User;
 @Mapper(componentModel = "spring", uses = UserMapper.class)
 public interface UserMapper {
 
-
-    GetUserDto userToGetUserDto(User user);
-
     LoginDto userToLoginDto(User user);
 
     RegisterDto userToRegisterDto(User user);

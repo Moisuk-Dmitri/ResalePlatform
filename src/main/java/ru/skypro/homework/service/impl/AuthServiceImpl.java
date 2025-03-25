@@ -2,7 +2,6 @@ package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.config.UserSecurityDTO;
@@ -29,26 +28,27 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean login(LoginDto loginDto) {
-        log.info("Trying to login: {}", loginDto);
-        ru.skypro.homework.model.User user = userRepository.findByUsername(loginDto.getUsername()).orElseThrow(() -> new UserNotFoundException(loginDto.getUsername()));
+        log.info("Trying to login: {}", loginDto.getUsername());
+        User user = userRepository.findByEmail(loginDto.getUsername()).orElseThrow(() -> new UserNotFoundException(loginDto.getUsername()));
         UserSecurityDTO userSecurityDTO = new UserSecurityDTO(user);
         if (!encoder.matches(loginDto.getPassword(), userSecurityDTO.getPassword())) {
             throw new InvalidCredentialsException("Invalid password");
         }
 
-        log.info("Успешный вход пользователя: {}", user.getUsername());
+        log.info("Успешный вход пользователя: {}", user.getEmail());
         return true;
     }
 
     @Override
     public boolean register(RegisterDto registerDto) {
-        log.info("Trying to registr: {}", registerDto);
+        log.info("Registration attempt: {}", registerDto.getUsername());
         if (userRepository.existsByEmail(registerDto.getUsername())) {
             throw new UserAlreadyExistsException(registerDto.getUsername());
         }
         User registeredUser = userMapper.RegisterDtoToUser(registerDto);
+        registeredUser.setPassword(encoder.encode(registerDto.getPassword()));
         userRepository.save(registeredUser);
-        if (userRepository.existsByEmail(registeredUser.getEmail())) log.info("Регистрация пользователя прошла");
+        if (userRepository.existsByEmail(registeredUser.getEmail())) log.info("Registration succeed");
         return true;
     }
 
