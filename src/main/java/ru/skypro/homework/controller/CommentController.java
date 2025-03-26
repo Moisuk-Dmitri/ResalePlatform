@@ -6,21 +6,15 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.config.RepositoryConfigurationSource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.comment.CommentDto;
 import ru.skypro.homework.dto.comment.CommentsDto;
 import ru.skypro.homework.dto.comment.CreateOrUpdateCommentDto;
 import ru.skypro.homework.service.CommentService;
 
-import java.util.List;
-
-import static ru.skypro.homework.security.Permissions.USER;
-import static ru.skypro.homework.security.Permissions.ADMIN;
+import static ru.skypro.homework.security.RoleAuthority.USER;
+import static ru.skypro.homework.security.RoleAuthority.ADMIN;
 
 /**
  * This controller provides endpoint for managing comments
@@ -179,8 +173,8 @@ public class CommentController {
     )
     @PreAuthorize(USER + " or " + ADMIN)
     @DeleteMapping("{adId}/comments/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable("adId") int adId, @PathVariable("commentId") int commentId) {
-        return ResponseEntity.ok(commentService.deleteComment(adId, commentId));
+    public void deleteComment(@PathVariable("adId") int adId, @PathVariable("commentId") int commentId) {
+        commentService.deleteComment(adId, commentId);
     }
 
     /**

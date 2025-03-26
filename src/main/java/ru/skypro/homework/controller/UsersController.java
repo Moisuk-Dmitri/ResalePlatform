@@ -16,7 +16,7 @@ import ru.skypro.homework.dto.user.UserDto;
 import ru.skypro.homework.service.UsersService;
 
 
-import static ru.skypro.homework.security.Permissions.USER;
+import static ru.skypro.homework.security.RoleAuthority.USER;
 
 /**
  * This controller provides endpoints for user's operations.
