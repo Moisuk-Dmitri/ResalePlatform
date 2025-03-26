@@ -2,9 +2,7 @@ package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,48 +34,46 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public void setPassword(SetPasswordDto setPasswordDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        log.info("Change password for user {}", authentication.getName());
-        User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()));
-        setPasswordDto.setNewPassword(encoder.encode(setPasswordDto.getNewPassword()));
-        user.setPassword(setPasswordDto.getNewPassword());
-        userRepository.save(user);
+        User authorizedUser = getAuthorizedUser();
+        log.info("Change password for user {}", authorizedUser.getEmail());
+
+        if (!encoder.matches(setPasswordDto.getCurrentPassword(), authorizedUser.getPassword())) {
+            log.error("Current password is incorrect for user: {}", authorizedUser.getEmail());
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Current password is incorrect for user");
+        }
+        authorizedUser.setPassword(encoder.encode(setPasswordDto.getNewPassword()));
+        userRepository.save(authorizedUser);
+        log.info("Password updated successfully for user: {}", authorizedUser.getEmail());
+
     }
 
     @Override
-    public UserDto getCurrentUserInfo() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()));
-            return mapper.userToUserDto(user);
-        } else {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
-        }
+    public UserDto getAuthorizedUserInfo() {
+       return mapper.userToUserDto(getAuthorizedUser());
     }
 
     @Override
     public UserDto updateUserInfo(UpdateUserDto updateUserDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()));
-            user.setFirstName(updateUserDto.getFirstName());
-            user.setLastName(updateUserDto.getLastName());
-            user.setPhone(updateUserDto.getPhone());
-            return mapper.userToUserDto(user);
-        } else {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
-        }
+        User authorizedUser = getAuthorizedUser();
+        mapper.updateUserFromUpdateUserDto(updateUserDto, authorizedUser);
+        return mapper.userToUserDto(authorizedUser);
+
     }
 
     @Override
     public void updateUserImage(MultipartFile file) {
+        User authorizedUser = getAuthorizedUser();
+        authorizedUser.setImage(file.toString());
+    }
+
+    private User getAuthorizedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()));
-            user.setImage(file.toString());
-        } else {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            log.error("User not authorized");
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
         }
+        String email = authentication.getName();
+        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
     }
 }
 

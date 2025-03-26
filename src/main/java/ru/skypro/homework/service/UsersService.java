@@ -12,7 +12,7 @@ public interface UsersService {
 
     void setPassword(SetPasswordDto setPasswordDto);
 
-    UserDto getCurrentUserInfo();
+    UserDto getAuthorizedUserInfo();
 
     UserDto updateUserInfo(UpdateUserDto updateUserDto);
 

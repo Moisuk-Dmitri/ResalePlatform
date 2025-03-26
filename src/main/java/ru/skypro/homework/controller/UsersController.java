@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +15,6 @@ import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
 import ru.skypro.homework.service.UsersService;
 
-import java.io.IOException;
 
 import static ru.skypro.homework.security.Permissions.USER;
 
@@ -23,6 +22,7 @@ import static ru.skypro.homework.security.Permissions.USER;
  * This controller provides endpoints for user's operations.
  */
 
+@Slf4j
 @RestController
 @CrossOrigin(value = "http://localhost:3000")
 @Tag(name = "Пользователи")
@@ -40,7 +40,6 @@ public class UsersController {
      * The endpoint for password updating
      *
      * @param setPassword User's DTO for the password updating
-     * @return ResponseEntity containing the password updating status
      * HTTP 200 (OK): password updating successful
      * HTTP 401 (Unauthorized): if authentication fails.
      * HTTP 403 (Forbidden): password updating declined
@@ -69,10 +68,8 @@ public class UsersController {
             }
     )
     @PreAuthorize(USER)
-    @PostMapping("users/set_password")
-    public ResponseEntity<?> setPassword(@RequestBody SetPasswordDto setPassword) {
-        usersService.setPassword(setPassword);
-        return ResponseEntity.ok().build();
+    @PostMapping("/users/set_password")
+    public void setPassword(@RequestBody SetPasswordDto setPassword) {usersService.setPassword(setPassword);
     }
 
     /**
@@ -103,10 +100,8 @@ public class UsersController {
 
     )
     @PreAuthorize(USER)
-    @GetMapping("users/me")
-    public ResponseEntity<UserDto> getUser() {
-        return ResponseEntity.ok(usersService.getCurrentUserInfo());
-    }
+    @GetMapping("/users/me")
+    public UserDto getUser() {return usersService.getAuthorizedUserInfo();}
 
     /**
      * Updating information about the authorized user
@@ -116,7 +111,7 @@ public class UsersController {
      * HTTP 200 (OK): updating successful
      * HTTP 400 (Unauthorized): if user is not authorized
      */
-    @PatchMapping("users/me")
+    @PatchMapping("/users/me")
     @Operation(
             tags = "Пользователи",
             summary = "Обновление информации об авторизованном пользователе",
@@ -139,8 +134,7 @@ public class UsersController {
             }
     )
     @PreAuthorize(USER)
-    public ResponseEntity<UserDto> updateUser(@RequestBody UpdateUserDto updateUserDto) {
-        return ResponseEntity.ok(usersService.updateUserInfo(updateUserDto));
+    public UserDto updateUser(@RequestBody UpdateUserDto updateUserDto) {return usersService.updateUserInfo(updateUserDto);
     }
 
     /**
@@ -149,7 +143,6 @@ public class UsersController {
      * @param file new avatar
      *             HTTP 200 (OK): updating successful
      *             HTTP 400 (Unauthorized): if user is not authorized
-     * @return ResponseEntity containing the updating status
      */
     @Operation(
             tags = "Пользователи",
@@ -170,9 +163,8 @@ public class UsersController {
             }
     )
     @PreAuthorize(USER)
-    @PatchMapping(value = "users/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateUserImage(@RequestParam("image") MultipartFile file) throws IOException {
+    @PatchMapping(value = "/users/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void updateUserImage(@RequestParam("image") MultipartFile file)  {
         usersService.updateUserImage(file);
-        return ResponseEntity.ok().build();
     }
 }
