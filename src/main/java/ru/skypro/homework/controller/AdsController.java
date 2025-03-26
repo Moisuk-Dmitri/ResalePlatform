@@ -21,8 +21,8 @@ import ru.skypro.homework.dto.ad.ExtendedAd;
 
 import java.io.IOException;
 
-import static ru.skypro.homework.security.Permissions.ADMIN;
-import static ru.skypro.homework.security.Permissions.USER;
+import static ru.skypro.homework.security.RoleAuthority.ADMIN;
+import static ru.skypro.homework.security.RoleAuthority.USER;
 
 /**
  * This controller provides endpoints for advertisement operations.
@@ -218,7 +218,6 @@ public class AdsController {
                     description = "Not found"
             )
     })
-    @PreAuthorize(USER + " or " + ADMIN)
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateAd(@PathVariable Integer id, @RequestBody CreateOrUpdateAdDto ad) {
         return new ResponseEntity<>(HttpStatus.OK);

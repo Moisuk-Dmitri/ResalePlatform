@@ -68,11 +68,10 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Void deleteComment(int adId, int commentId) {
+    public void deleteComment(int adId, int commentId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             commentMapper.commentToCommentDto(commentRepository.deleteByAdAndPk(adId, commentId).get());
-            return null;
         } else {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
         }
