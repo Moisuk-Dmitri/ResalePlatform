@@ -1,6 +1,7 @@
 package ru.skypro.homework.service.mappers;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import ru.skypro.homework.dto.user.*;
 import ru.skypro.homework.model.User;
 
@@ -17,7 +18,7 @@ public interface UserMapper {
     @Mapping(source = "password",target = "currentPassword")
     SetPasswordDto userToSetPasswordDto(User user);
 
-    UpdateUserDto userToUpdateUserDto(User user);
+    void updateUserFromUpdateUserDto(UpdateUserDto updateUserDto,@MappingTarget User user);
 
     UserDto userToUserDto(User user);
 
