@@ -10,7 +10,6 @@ import ru.skypro.homework.service.UsersService;
 import javax.transaction.Transactional;
 
 @Service
-
 public class MyUserDetailsService implements UserDetailsService {
 
     private final UsersService usersService;
