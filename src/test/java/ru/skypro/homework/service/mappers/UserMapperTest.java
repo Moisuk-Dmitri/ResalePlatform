@@ -64,4 +64,10 @@ class UserMapperTest {
     }
 
 
+    @Test
+    void userToGetUserDto() {
+
+        System.out.println("mapper.userToGetUserDto(oleg) = " + mapper.userToGetUserDto(oleg));
+
+    }
 }

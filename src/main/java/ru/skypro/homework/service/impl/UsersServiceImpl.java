@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.dto.user.GetUserDto;
 import ru.skypro.homework.dto.user.SetPasswordDto;
 import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
@@ -18,7 +19,10 @@ import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.UsersService;
 import ru.skypro.homework.service.mappers.UserMapper;
 
+import javax.transaction.Transactional;
+
 @Service
+@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class UsersServiceImpl implements UsersService {
@@ -43,25 +47,38 @@ public class UsersServiceImpl implements UsersService {
         }
         authorizedUser.setPassword(encoder.encode(setPasswordDto.getNewPassword()));
         userRepository.save(authorizedUser);
-        log.info("Password updated successfully for user: {}", authorizedUser.getEmail());
+        if (encoder.matches(setPasswordDto.getNewPassword(), authorizedUser.getPassword())) {
+            log.info("Password updated successfully for user: {}", authorizedUser.getEmail());
+        }
 
     }
 
     @Override
-    public UserDto getAuthorizedUserInfo() {
-       return mapper.userToUserDto(getAuthorizedUser());
+    public GetUserDto getAuthorizedUserInfo() {
+        log.info("Request authorized user's info {}", getAuthorizedUser().getEmail());
+        log.info(mapper.userToGetUserDto(getAuthorizedUser()).toString());
+        return mapper.userToGetUserDto(getAuthorizedUser());
+
     }
 
     @Override
     public UserDto updateUserInfo(UpdateUserDto updateUserDto) {
+        log.info("Request updating authorized user's info {}", getAuthorizedUser().getEmail());
         User authorizedUser = getAuthorizedUser();
         mapper.updateUserFromUpdateUserDto(updateUserDto, authorizedUser);
+        User updatedUserInfo = userRepository.save(authorizedUser);
+        if (updatedUserInfo.getFirstName().equals(updateUserDto.getFirstName())
+                && updatedUserInfo.getLastName().equals(updateUserDto.getLastName())
+                && updatedUserInfo.getPhone().equals(updateUserDto.getPhone())) {
+            log.info("User updated successfully for user: {}", authorizedUser.getEmail());
+        }
         return mapper.userToUserDto(authorizedUser);
 
     }
 
     @Override
     public void updateUserImage(MultipartFile file) {
+        log.info("Request updating authorized user's image {}", getAuthorizedUser().getEmail());
         User authorizedUser = getAuthorizedUser();
         authorizedUser.setImage(file.toString());
     }

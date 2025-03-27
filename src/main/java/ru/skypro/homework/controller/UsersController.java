@@ -7,9 +7,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.dto.user.GetUserDto;
 import ru.skypro.homework.dto.user.SetPasswordDto;
 import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
@@ -101,7 +103,7 @@ public class UsersController {
     )
     @PreAuthorize(USER)
     @GetMapping("/users/me")
-    public UserDto getUser() {return usersService.getAuthorizedUserInfo();}
+    public ResponseEntity<GetUserDto> getUser() {return ResponseEntity.ok(usersService.getAuthorizedUserInfo()) ;}
 
     /**
      * Updating information about the authorized user

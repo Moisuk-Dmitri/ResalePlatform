@@ -1,0 +1,24 @@
+package ru.skypro.homework.dto.user;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+
+/**
+ * Represents an object with authorized user's info: id, email, firstname, lastName, phone, role and image.
+ */
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+public class GetUserDto {
+
+        private int id;
+        private String email;
+        private String firstName;
+        private String lastName;
+        private String phone;
+        private String role;
+        private String image;
+    }
+

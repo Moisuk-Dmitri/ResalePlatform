@@ -1,6 +1,7 @@
 package ru.skypro.homework.service;
 
 import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.dto.user.GetUserDto;
 import ru.skypro.homework.dto.user.SetPasswordDto;
 import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
@@ -12,7 +13,7 @@ public interface UsersService {
 
     void setPassword(SetPasswordDto setPasswordDto);
 
-    UserDto getAuthorizedUserInfo();
+    GetUserDto getAuthorizedUserInfo();
 
     UserDto updateUserInfo(UpdateUserDto updateUserDto);
 
