@@ -20,7 +20,15 @@ import ru.skypro.homework.service.UsersService;
 import ru.skypro.homework.service.mappers.UserMapper;
 
 import javax.transaction.Transactional;
-
+/**
+ * Service class for managing user's data.
+ * This class provides methods:
+ * searching user by email,
+ * updating password,
+ * getting authorized user's info,
+ * updating authorized user's info,
+ * updating authorized user's image (avatar)
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -31,11 +39,20 @@ public class UsersServiceImpl implements UsersService {
     private final PasswordEncoder encoder;
     private final UserMapper mapper;
 
+    /**
+     * Method for searching user by email. Used in another services
+     * @param email User's email (username)
+     * @return User (Entity)
+     */
     @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
     }
 
+    /**
+     * Method for updating authorized user's password
+     * @param setPasswordDto DTO, containing user's current and new password
+     */
     @Override
     public void setPassword(SetPasswordDto setPasswordDto) {
         User authorizedUser = getAuthorizedUser();
@@ -53,6 +70,10 @@ public class UsersServiceImpl implements UsersService {
 
     }
 
+    /**
+     * Method for getting authorized user's info
+     * @return GetUserDto DTO, containing authorized user's info
+     */
     @Override
     public GetUserDto getAuthorizedUserInfo() {
         log.info("Request authorized user's info {}", getAuthorizedUser().getEmail());
@@ -61,6 +82,10 @@ public class UsersServiceImpl implements UsersService {
 
     }
 
+    /**
+     * Method for updating authorized user's info
+     * @return UserDto DTO, containing updating authorized user's info
+     */
     @Override
     public UserDto updateUserInfo(UpdateUserDto updateUserDto) {
         log.info("Request updating authorized user's info {}", getAuthorizedUser().getEmail());
@@ -75,7 +100,10 @@ public class UsersServiceImpl implements UsersService {
         return mapper.userToUserDto(authorizedUser);
 
     }
-
+    /**
+     * Method for updating authorized user's image (avatar)
+     * @param file New image
+     */
     @Override
     public void updateUserImage(MultipartFile file) {
         log.info("Request updating authorized user's image {}", getAuthorizedUser().getEmail());
@@ -83,6 +111,10 @@ public class UsersServiceImpl implements UsersService {
         authorizedUser.setImage(file.toString());
     }
 
+    /**
+     * Private method for getting authorized user's entity
+     * @return User
+     */
     private User getAuthorizedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
