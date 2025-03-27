@@ -10,7 +10,7 @@ import java.util.List;
 
 public class UserSecurityDTO implements UserDetails {
 
-    private final User user;
+    private User user;
 
     public UserSecurityDTO(User user) {
         this.user = user;
@@ -18,7 +18,7 @@ public class UserSecurityDTO implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE" + user.getRole().name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()));
     }
 
     @Override
@@ -33,21 +33,21 @@ public class UserSecurityDTO implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }
