@@ -23,8 +23,6 @@ import ru.skypro.homework.service.AdService;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 @Slf4j
@@ -159,20 +157,17 @@ public class AdServiceImpl implements AdService {
      * Change
      *
      * @param image file
-     * @return String path
      * @throws ImageNotFoundException if it is not found
      */
     @Override
-    public String updateImage(Integer id, MultipartFile image) {
-//        Ad ad = adRepository.findById(id).orElseThrow(() -> new AdNotFoundException(id));
-//        if (!ad.getImage().equals("no_image.png")) {
-//            imageService.deleteImageFromDir(ad.getImage());
-//        }
-//        String path = imageService.updateImage(image);
-//        ad.setImage(path);
-//        adRepository.save(ad);
-//        return path;
-        return "";
+    public void updateImage(Integer id, MultipartFile image) {
+        Ad ad = adRepository.findById(id).orElseThrow(() -> new AdNotFoundException(id));
+        if (!ad.getImage().equals("no_image.png")) {
+          imageService.deleteAdImage(ad);
+        }
+        String path = imageService.updateImage(image);
+        ad.setImage(path);
+        adRepository.save(ad);
     }
 
     /**

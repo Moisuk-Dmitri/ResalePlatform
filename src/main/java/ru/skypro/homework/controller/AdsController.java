@@ -302,11 +302,12 @@ public class AdsController {
             )
     })
     @PatchMapping(value = "ads/{id}/image")
-    public ResponseEntity<String> updateAdImage(
+    public ResponseEntity<?> updateAdImage(
             @PathVariable("id") Integer id,
             @RequestBody MultipartFile image
     ) throws IOException {
-        return ResponseEntity.ok(adService.updateImage(id, image));
+        adService.updateImage(id,image);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "ads/images/{id}", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/*"})

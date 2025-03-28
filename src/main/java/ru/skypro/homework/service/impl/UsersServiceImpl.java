@@ -122,7 +122,7 @@ public class UsersServiceImpl implements UsersService {
         log.info("Request updating authorized user's image {}", getAuthorizedUser().getEmail());
         User user = getAuthorizedUser();
 
-        if (!user.getImage().equals("no_image.png") && user.getImage() != null) {
+        if (!user.getImage().equals("no_image.png")) {
             imageService.deleteUserImage(user);
         }
         String newImage = imageService.updateImage(file);
