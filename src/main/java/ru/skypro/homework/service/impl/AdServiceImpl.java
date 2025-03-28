@@ -68,7 +68,7 @@ public class AdServiceImpl implements AdService {
      */
     @Override
     public Ads getAdsMe(Authentication authentication) {
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()));
+        User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()));
         return adMapper.adsToAdsDto(adRepository.findAllByUserId(user.getId()).get());
     }
 
@@ -82,7 +82,7 @@ public class AdServiceImpl implements AdService {
      */
     @Override
     public AdDto addAd(CreateOrUpdateAdDto properties, MultipartFile image, String userName) throws IOException {
-        User user = userRepository.findByUsername(userName).orElseThrow(() -> new UserNotFoundException(userName));
+        User user = userRepository.findByEmail(userName).orElseThrow(() -> new UserNotFoundException(userName));
         Image image1 = imageService.uploadAdImage(properties, image);
         Ad ad = adMapper.createAd(properties, user, image1);
         adRepository.save(ad);
