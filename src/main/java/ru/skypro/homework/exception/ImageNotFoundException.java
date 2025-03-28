@@ -5,7 +5,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class ImageNotFoundException extends RuntimeException {
-    public ImageNotFoundException(Integer imageId) {
-        super("Image ID " + imageId + " is not found");
+    public ImageNotFoundException() {
+        super("image not found");
+    }
+
+    public ImageNotFoundException(String message) {
+        super(message);
     }
 }

@@ -8,4 +8,6 @@ public class ImageSaveException extends RuntimeException{
     public ImageSaveException(String message) {
         super(message);
     }
+
+    public ImageSaveException() {super("image save exception");}
 }

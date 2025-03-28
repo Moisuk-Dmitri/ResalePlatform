@@ -27,8 +27,7 @@ public class Ad {
     public Ad() {
     }
 
-    public Ad(int pk, String title, String description, String image, int price, User author) {
-        this.pk = pk;
+    public Ad(String title, String description, String image, int price, User author) {
         this.title = title;
         this.description = description;
         this.image = image;

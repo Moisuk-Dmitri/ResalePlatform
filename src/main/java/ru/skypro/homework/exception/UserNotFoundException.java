@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "[EXCEPTION] User Not Found Exception")
 public class UserNotFoundException extends RuntimeException{
 
-
-
     public UserNotFoundException(String username) {
         super("Such user wasn't found: " + username);
     }

@@ -13,13 +13,20 @@ import ru.skypro.homework.dto.user.GetUserDto;
 import ru.skypro.homework.dto.user.SetPasswordDto;
 import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
+import ru.skypro.homework.exception.AdNotFoundException;
 import ru.skypro.homework.exception.UserNotFoundException;
+import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UsersService;
 import ru.skypro.homework.service.mappers.UserMapper;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 /**
  * Service class for managing user's data.
  * This class provides methods:
@@ -36,11 +43,13 @@ import javax.transaction.Transactional;
 public class UsersServiceImpl implements UsersService {
 
     private final UserRepository userRepository;
+    private final ImageService imageService;
     private final PasswordEncoder encoder;
     private final UserMapper mapper;
 
     /**
      * Method for searching user by email. Used in another services
+     *
      * @param email User's email (username)
      * @return User (Entity)
      */
@@ -51,6 +60,7 @@ public class UsersServiceImpl implements UsersService {
 
     /**
      * Method for updating authorized user's password
+     *
      * @param setPasswordDto DTO, containing user's current and new password
      */
     @Override
@@ -72,6 +82,7 @@ public class UsersServiceImpl implements UsersService {
 
     /**
      * Method for getting authorized user's info
+     *
      * @return GetUserDto DTO, containing authorized user's info
      */
     @Override
@@ -84,6 +95,7 @@ public class UsersServiceImpl implements UsersService {
 
     /**
      * Method for updating authorized user's info
+     *
      * @return UserDto DTO, containing updating authorized user's info
      */
     @Override
@@ -100,19 +112,33 @@ public class UsersServiceImpl implements UsersService {
         return mapper.userToUserDto(authorizedUser);
 
     }
+
     /**
      * Method for updating authorized user's image (avatar)
-     * @param file New image
+     *
+     * @param image New image
      */
     @Override
-    public void updateUserImage(MultipartFile file) {
+    public void updateUserImage(String image) {
         log.info("Request updating authorized user's image {}", getAuthorizedUser().getEmail());
-        User authorizedUser = getAuthorizedUser();
-        authorizedUser.setImage(file.toString());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()));
+        if (!user.getImage().equals("no_image.png")) {
+            imageService.deleteImageFromDir(user.getImage());
+        }
+        String path = imageService.saveImageToDir(image);
+        user.setImage(path);
+        userRepository.save(user);
+    }
+
+    @Override
+    public byte[] getUserImage(int id) throws IOException {
+        return Files.readAllBytes(Paths.get(imageService.getImagePath() + "/" + userRepository.findById(id).orElseThrow(() -> new AdNotFoundException(id)).getImage()));
     }
 
     /**
      * Private method for getting authorized user's entity
+     *
      * @return User
      */
     private User getAuthorizedUser() {

@@ -7,6 +7,8 @@ import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
 import ru.skypro.homework.model.User;
 
+import java.io.IOException;
+
 public interface UsersService {
 
     User findByEmail(String email);
@@ -17,5 +19,7 @@ public interface UsersService {
 
     UserDto updateUserInfo(UpdateUserDto updateUserDto);
 
-    void updateUserImage(MultipartFile file);
+    void updateUserImage(String image);
+
+    byte[] getUserImage(int id) throws IOException;
 }

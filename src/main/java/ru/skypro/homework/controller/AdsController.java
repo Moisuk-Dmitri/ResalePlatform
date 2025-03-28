@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,12 @@ import ru.skypro.homework.dto.ad.AdDto;
 import ru.skypro.homework.dto.ad.Ads;
 import ru.skypro.homework.dto.ad.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ad.ExtendedAd;
+import ru.skypro.homework.repository.AdRepository;
+import ru.skypro.homework.service.AdService;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static ru.skypro.homework.security.RoleAuthority.ADMIN;
 import static ru.skypro.homework.security.RoleAuthority.USER;
@@ -29,22 +34,27 @@ import static ru.skypro.homework.security.RoleAuthority.USER;
  */
 @RestController
 @CrossOrigin(value = "http://localhost:3000")
-@RequestMapping("ads")
 @Slf4j
 @Tag(
         name = "Объявления",
         description = "Интерфейс для управления объявлениями о продаже"
 )
 @ApiResponses(value = {
-                @ApiResponse(
-                        responseCode = "401",
-                        description = "UNAUTHORIZED: не авторизован"),
-                @ApiResponse(
-                        responseCode = "500",
-                        description = "INTERNAL_SERVER_ERROR: ошибка сервера при обработке запроса"
-                )
-        })
+        @ApiResponse(
+                responseCode = "401",
+                description = "UNAUTHORIZED: не авторизован"),
+        @ApiResponse(
+                responseCode = "500",
+                description = "INTERNAL_SERVER_ERROR: ошибка сервера при обработке запроса"
+        )
+})
 public class AdsController {
+
+    private final AdService adService;
+
+    public AdsController(AdService adService) {
+        this.adService = adService;
+    }
 
     /**
      * Retrieves all advertisements.
@@ -56,8 +66,6 @@ public class AdsController {
      * HTTP 200 (OK) with the list of ads
      *
      * }</pre>
-     *
-     *
      */
     @Operation(summary = "Получение всех объявлений")
     @ApiResponse(
@@ -69,9 +77,9 @@ public class AdsController {
             )
     )
     @PreAuthorize(USER)
-    @GetMapping("/")
-    public ResponseEntity<?> getAll() {
-        return new ResponseEntity<>(HttpStatus.OK);
+    @GetMapping("ads")
+    public ResponseEntity<Ads> getAll() {
+        return ResponseEntity.ok(adService.getAllAds());
     }
 
     /**
@@ -86,7 +94,6 @@ public class AdsController {
      * HTTP 201 (Created): with the created ad details.
      *
      * }</pre>
-     *
      * @throws IOException If an I/O error occurs during image processing.
      */
     @Operation(summary = "Добавление объявления")
@@ -98,9 +105,9 @@ public class AdsController {
             )
     )
     @PreAuthorize(USER)
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createAd(@RequestPart CreateOrUpdateAdDto properties, @RequestParam MultipartFile image) throws IOException {
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @PostMapping("ads")
+    public ResponseEntity<AdDto> createAd(@RequestBody CreateOrUpdateAdDto properties, @RequestBody String image) throws IOException {
+        return ResponseEntity.ok(adService.addAd(properties, image));
     }
 
     /**
@@ -137,9 +144,9 @@ public class AdsController {
             )
     })
     @PreAuthorize(USER)
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getAdInfo(@PathVariable("id") Integer id) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    @GetMapping("ads/{id}")
+    public ResponseEntity<ExtendedAd> getAdInfo(@PathVariable("id") Integer id) {
+        return ResponseEntity.ok(adService.getAd(id));
     }
 
     /**
@@ -174,9 +181,9 @@ public class AdsController {
             )
     })
     @PreAuthorize(USER + " or " + ADMIN)
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAd(@PathVariable Integer id) {
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    @DeleteMapping("ads/{id}")
+    public void deleteAd(@PathVariable Integer id) {
+        adService.deleteAd(id);
     }
 
     /**
@@ -218,9 +225,9 @@ public class AdsController {
                     description = "Not found"
             )
     })
-    @PatchMapping("/{id}")
-    public ResponseEntity<?> updateAd(@PathVariable Integer id, @RequestBody CreateOrUpdateAdDto ad) {
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PatchMapping("ads/{id}")
+    public ResponseEntity<AdDto> updateAd(@PathVariable Integer id, @RequestBody CreateOrUpdateAdDto ad) {
+        return ResponseEntity.ok(adService.updateAd(id, ad));
     }
 
     /**
@@ -250,9 +257,9 @@ public class AdsController {
                     description = "Unauthorized"
             )
     })
-    @GetMapping("/me")
-    public ResponseEntity<?> getUsersAds() {
-        return new ResponseEntity<>(HttpStatus.OK);
+    @GetMapping("ads/me")
+    public ResponseEntity<Ads> getUsersAds() {
+        return ResponseEntity.ok(adService.getAdsMe());
     }
 
     /**
@@ -270,7 +277,6 @@ public class AdsController {
      * HTTP 404 (Not Found): if the ad is not found.
      *
      * }</pre>
-     *
      */
     @Operation(summary = "Обновление картинки объявления")
     @ApiResponses(value = {
@@ -295,11 +301,16 @@ public class AdsController {
                     description = "Not found"
             )
     })
-    @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateAdImage(
+    @PatchMapping(value = "ads/{id}/image")
+    public ResponseEntity<String> updateAdImage(
             @PathVariable("id") Integer id,
-            @RequestParam("image") MultipartFile image
-    ) {
-        return new ResponseEntity<>(HttpStatus.OK);
+            @RequestBody String image
+    ) throws IOException {
+        return ResponseEntity.ok(adService.updateImage(id, image));
+    }
+
+    @GetMapping(value = "ads/images/{id}", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/*"})
+    public byte[] getImage(@PathVariable("id") int id) throws IOException {
+        return adService.getAdImage(id);
     }
 }

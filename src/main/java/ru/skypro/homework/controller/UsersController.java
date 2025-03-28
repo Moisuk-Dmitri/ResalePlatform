@@ -18,6 +18,8 @@ import ru.skypro.homework.dto.user.UserDto;
 import ru.skypro.homework.service.UsersService;
 
 
+import java.io.IOException;
+
 import static ru.skypro.homework.security.RoleAuthority.USER;
 
 /**
@@ -165,8 +167,13 @@ public class UsersController {
             }
     )
     @PreAuthorize(USER)
-    @PatchMapping(value = "/users/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void updateUserImage(@RequestParam("image") MultipartFile file)  {
+    @PatchMapping(value = "/users/me/image")
+    public void updateUserImage(@RequestBody String file)  {
         usersService.updateUserImage(file);
+    }
+
+    @GetMapping(value = "/users/images/{id}", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/*"})
+    public byte[] getImage(@PathVariable("id") int id) throws IOException {
+        return usersService.getUserImage(id);
     }
 }
