@@ -167,10 +167,12 @@ public class UsersController {
             }
     )
     @PreAuthorize(USER)
-    @PatchMapping(value = "/users/me/image")
-    public void updateUserImage(@RequestBody String file)  {
+    @PatchMapping(value = "/users/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateUserImage(@RequestParam("image") MultipartFile file) throws IOException  {
         usersService.updateUserImage(file);
+        return ResponseEntity.ok().build();
     }
+
 
     @GetMapping(value = "/users/images/{id}", produces = {MediaType.IMAGE_PNG_VALUE, MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_GIF_VALUE, "image/*"})
     public byte[] getImage(@PathVariable("id") int id) throws IOException {

@@ -15,16 +15,15 @@ import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
 import ru.skypro.homework.exception.AdNotFoundException;
 import ru.skypro.homework.exception.UserNotFoundException;
-import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.UserRepository;
-import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UsersService;
 import ru.skypro.homework.service.mappers.UserMapper;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -43,7 +42,7 @@ import java.nio.file.Paths;
 public class UsersServiceImpl implements UsersService {
 
     private final UserRepository userRepository;
-    private final ImageService imageService;
+    private final ImageServiceImpl imageService;
     private final PasswordEncoder encoder;
     private final UserMapper mapper;
 
@@ -116,24 +115,24 @@ public class UsersServiceImpl implements UsersService {
     /**
      * Method for updating authorized user's image (avatar)
      *
-     * @param image New image
+     * @param file New image
      */
     @Override
-    public void updateUserImage(String image) {
+    public void updateUserImage(MultipartFile file) throws IOException {
         log.info("Request updating authorized user's image {}", getAuthorizedUser().getEmail());
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()));
-        if (!user.getImage().equals("no_image.png")) {
-            imageService.deleteImageFromDir(user.getImage());
+        User user = getAuthorizedUser();
+
+        if (!user.getImage().equals("no_image.png") && user.getImage() != null) {
+            imageService.deleteUserImage(user);
         }
-        String path = imageService.saveImageToDir(image);
-        user.setImage(path);
+        String newImage = imageService.updateImage(file);
+        user.setImage(newImage);
         userRepository.save(user);
     }
 
     @Override
     public byte[] getUserImage(int id) throws IOException {
-        return Files.readAllBytes(Paths.get(imageService.getImagePath() + "/" + userRepository.findById(id).orElseThrow(() -> new AdNotFoundException(id)).getImage()));
+        return Files.readAllBytes(Paths.get(imageService.getPath(),getAuthorizedUser().getImage()));
     }
 
     /**

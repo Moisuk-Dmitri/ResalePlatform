@@ -19,7 +19,7 @@ public interface UsersService {
 
     UserDto updateUserInfo(UpdateUserDto updateUserDto);
 
-    void updateUserImage(String image);
+    void updateUserImage(MultipartFile file) throws IOException;
 
     byte[] getUserImage(int id) throws IOException;
 }

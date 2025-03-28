@@ -13,7 +13,6 @@ import ru.skypro.homework.exception.UserAlreadyExistsException;
 import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AuthService;
-import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.mappers.UserMapper;
 
 @Service
@@ -26,7 +25,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final MyUserDetailsService myUserDetailsService;
-    private final ImageService imageService;
+    private final ImageServiceImpl imageService;
 
 
     @Override

@@ -57,7 +57,7 @@ public class User {
         this.phone = phone;
         this.email = email;
         this.role = role;
-        this.image = image;
+        this.image = "no_image";
     }
 
     public int getId() {

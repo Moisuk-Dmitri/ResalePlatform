@@ -1,7 +1,6 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,7 +14,6 @@ import ru.skypro.homework.dto.ad.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ad.ExtendedAd;
 import ru.skypro.homework.exception.*;
 import ru.skypro.homework.repository.CommentRepository;
-import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.mappers.AdMapper;
 import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.model.User;
@@ -23,16 +21,11 @@ import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
 
-import javax.imageio.ImageIO;
 import javax.transaction.Transactional;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 
 @Slf4j
 @Transactional
@@ -43,9 +36,9 @@ public class AdServiceImpl implements AdService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final AdMapper adMapper;
-    private final ImageService imageService;
+    private final ImageServiceImpl imageService;
 
-    public AdServiceImpl(AdRepository adRepository, UserRepository userRepository, CommentRepository commentRepository, AdMapper adMapper, ImageService imageService) {
+    public AdServiceImpl(AdRepository adRepository, UserRepository userRepository, CommentRepository commentRepository, AdMapper adMapper, ImageServiceImpl imageService) {
         this.adRepository = adRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
@@ -110,21 +103,26 @@ public class AdServiceImpl implements AdService {
         }
     }
 
+    @Override
+    public AdDto addAd(CreateOrUpdateAdDto properties, String image) {
+        return null;
+    }
+
     /**
      * Add
      *
      * @param properties CreateOrUpdateAdDto.
-     * @param image      file of image.
+     * @param file      file of image.
      * @return AdDTO Dto-объект объявления.
      */
     @Override
-    public AdDto addAd(CreateOrUpdateAdDto properties, String image) {
+    public AdDto addAd(CreateOrUpdateAdDto properties, MultipartFile file) throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             Ad ad = new Ad(
                     properties.getTitle(),
                     properties.getDescription(),
-                    imageService.saveImageToDir(image),
+                    imageService.updateImage(file),
                     properties.getPrice(),
                     userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()))
             );
@@ -165,14 +163,15 @@ public class AdServiceImpl implements AdService {
      */
     @Override
     public String updateImage(Integer id, String image) {
-        Ad ad = adRepository.findById(id).orElseThrow(() -> new AdNotFoundException(id));
-        if (!ad.getImage().equals("no_image.png")) {
-            imageService.deleteImageFromDir(ad.getImage());
-        }
-        String path = imageService.saveImageToDir(image);
-        ad.setImage(path);
-        adRepository.save(ad);
-        return path;
+//        Ad ad = adRepository.findById(id).orElseThrow(() -> new AdNotFoundException(id));
+//        if (!ad.getImage().equals("no_image.png")) {
+//            imageService.deleteImageFromDir(ad.getImage());
+//        }
+//        String path = imageService.updateImage(image);
+//        ad.setImage(path);
+//        adRepository.save(ad);
+//        return path;
+        return null;
     }
 
     /**
@@ -185,13 +184,13 @@ public class AdServiceImpl implements AdService {
     public void deleteAd(Integer adId) {
         Ad ad = adRepository.findById(adId).orElseThrow(() -> new AdNotFoundException(adId));
         commentRepository.deleteAllByAdPk(ad.getPk());
-        imageService.deleteImageFromDir(ad.getImage());
+        imageService.deleteAdImage(ad);
         adRepository.delete(ad);
     }
 
     @Override
     public byte[] getAdImage(int id) throws IOException {
-        return Files.readAllBytes(Paths.get(imageService.getImagePath() + "/" + adRepository.findById(id).orElseThrow(() -> new AdNotFoundException(id)).getImage()));
+        return Files.readAllBytes(Paths.get(imageService.getPath() + "/" + adRepository.findById(id).orElseThrow(() -> new AdNotFoundException(id)).getImage()));
     }
 
     /**

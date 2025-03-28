@@ -1,62 +1,58 @@
 package ru.skypro.homework.service.impl;
 
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import ru.skypro.homework.exception.ImageNotFoundException;
-import ru.skypro.homework.service.ImageService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.model.Ad;
+import ru.skypro.homework.model.User;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
-@Service
-public class ImageServiceImpl implements ImageService {
+@Component
+@Data
+public class ImageServiceImpl {
 
-    private final Path imagePath;
 
-    public ImageServiceImpl(@Value("${path.images}") Path imagePath) {
-        this.imagePath = imagePath;
+    public ResponseEntity<byte[]> getImageAsBytes;
+
+    @Value("${image.path}")
+    private String path;
+
+
+    public String updateImage(MultipartFile image) throws IOException {
+
+        Path imagePath = Paths.get(path);
+        Files.createDirectories(Paths.get(path)); //create directory for images
+        String imageName = UUID.randomUUID()+"-" + image.getOriginalFilename(); //create name for new image
+
+        Path filePath = imagePath.resolve(imageName); // create final path with created image name
+        Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING); // copy image to created directory with replacing old image
+        return imageName;
     }
 
-    @Override
-    public Path getImagePath() {
-        return imagePath;
-    }
-
-    @Override
-    public String saveImageToDir(String image) {
+    public void deleteUserImage(User user)  {
+        Path imagePath = Paths.get(path, user.getImage());
         try {
-            Path path = Paths.get(imagePath + "\\" + image);
-            File file = new File(String.valueOf(path.toAbsolutePath()));
-            if (!file.exists()) {
-                throw new ImageNotFoundException("image not found to read");
-            }
-            BufferedImage bi = ImageIO.read(file);
-
-            String generatedName = UUID.randomUUID() + ".png";
-            File outputfile = new File(imagePath.toString() + "\\" + generatedName);
-            ImageIO.write(bi, "png", outputfile);
-
-            return generatedName;
-        } catch (IOException e) {
+            Files.deleteIfExists(imagePath);
+        }catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
     }
 
-    @Override
-    public void deleteImageFromDir(String image) {
-        Path path = Paths.get(imagePath + "\\" + image);
-        File file = new File(String.valueOf(path.toAbsolutePath()));
-        if (!file.exists()) {
-            throw new ImageNotFoundException("image not found to delete");
+    public void deleteAdImage(Ad ad)  {
+        Path imagePath = Paths.get(path, ad.getImage());
+        try {
+            Files.deleteIfExists(imagePath);
+        }catch (Exception e) {
+            e.printStackTrace();
         }
-
-        file.delete();
     }
 
 }
