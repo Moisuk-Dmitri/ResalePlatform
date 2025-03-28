@@ -26,14 +26,23 @@ public class ImageServiceImpl {
     private String path;
 
 
-    public String updateImage(MultipartFile image) throws IOException {
+    public String updateImage(MultipartFile image)  {
 
         Path imagePath = Paths.get(path);
-        Files.createDirectories(Paths.get(path)); //create directory for images
+
+        try {
+            Files.createDirectories(Paths.get(path)); //create directory for images
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         String imageName = UUID.randomUUID()+"-" + image.getOriginalFilename(); //create name for new image
 
         Path filePath = imagePath.resolve(imageName); // create final path with created image name
-        Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING); // copy image to created directory with replacing old image
+        try {
+            Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING); // copy image to created directory with replacing old image
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return imageName;
     }
 
