@@ -118,7 +118,7 @@ public class UsersServiceImpl implements UsersService {
      * @param file New image
      */
     @Override
-    public void updateUserImage(MultipartFile file) throws IOException {
+    public void updateUserImage(MultipartFile file)  {
         log.info("Request updating authorized user's image {}", getAuthorizedUser().getEmail());
         User user = getAuthorizedUser();
 
