@@ -132,7 +132,8 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public byte[] getUserImage(int id) throws IOException {
-        return Files.readAllBytes(Paths.get(imageService.getPath(),getAuthorizedUser().getImage()));
+        User user = getAuthorizedUser();
+        return imageService.getUserImage(user);
     }
 
     /**

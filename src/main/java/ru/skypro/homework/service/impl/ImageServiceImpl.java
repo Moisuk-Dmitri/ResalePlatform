@@ -64,4 +64,14 @@ public class ImageServiceImpl {
         }
     }
 
+    public byte[] getUserImage(User user) throws IOException {
+        Path imagePath = Paths.get(path, user.getImage());
+        return Files.readAllBytes(imagePath);
+    }
+
+    public byte[] getAdImage(Ad ad) throws IOException {
+        Path imagePath = Paths.get(path, ad.getImage());
+        return Files.readAllBytes(imagePath);
+    }
+
 }

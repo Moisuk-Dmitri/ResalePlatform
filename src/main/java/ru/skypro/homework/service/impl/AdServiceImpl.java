@@ -190,7 +190,8 @@ public class AdServiceImpl implements AdService {
 
     @Override
     public byte[] getAdImage(int id) throws IOException {
-        return Files.readAllBytes(Paths.get(imageService.getPath() + "/" + adRepository.findById(id).orElseThrow(() -> new AdNotFoundException(id)).getImage()));
+        Ad ad = adRepository.findById(id).orElseThrow(() -> new AdNotFoundException(id));
+        return imageService.getAdImage(ad);
     }
 
     /**
