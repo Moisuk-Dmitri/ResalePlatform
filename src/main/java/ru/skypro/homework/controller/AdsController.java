@@ -105,8 +105,8 @@ public class AdsController {
             )
     )
     @PreAuthorize(USER)
-    @PostMapping("ads")
-    public ResponseEntity<AdDto> createAd(@RequestBody CreateOrUpdateAdDto properties, @RequestBody String image) throws IOException {
+    @PostMapping(value = "ads", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<AdDto> createAd(@RequestPart CreateOrUpdateAdDto properties, @RequestPart MultipartFile image) throws IOException {
         return ResponseEntity.ok(adService.addAd(properties, image));
     }
 
@@ -304,7 +304,7 @@ public class AdsController {
     @PatchMapping(value = "ads/{id}/image")
     public ResponseEntity<String> updateAdImage(
             @PathVariable("id") Integer id,
-            @RequestBody String image
+            @RequestBody MultipartFile image
     ) throws IOException {
         return ResponseEntity.ok(adService.updateImage(id, image));
     }

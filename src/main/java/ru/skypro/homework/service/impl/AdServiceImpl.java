@@ -103,10 +103,10 @@ public class AdServiceImpl implements AdService {
         }
     }
 
-    @Override
-    public AdDto addAd(CreateOrUpdateAdDto properties, String image) {
-        return null;
-    }
+//    @Override
+//    public AdDto addAd(CreateOrUpdateAdDto properties, MultipartFile image) {
+//        return null;
+//    }
 
     /**
      * Add
@@ -127,6 +127,7 @@ public class AdServiceImpl implements AdService {
                     userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()))
             );
 
+            adRepository.save(ad);
             log.info("Ad {} {} saved", ad.getPk(), ad.getTitle());
             return adMapper.adToAdDto(ad);
         } else {
@@ -162,7 +163,7 @@ public class AdServiceImpl implements AdService {
      * @throws ImageNotFoundException if it is not found
      */
     @Override
-    public String updateImage(Integer id, String image) {
+    public String updateImage(Integer id, MultipartFile image) {
 //        Ad ad = adRepository.findById(id).orElseThrow(() -> new AdNotFoundException(id));
 //        if (!ad.getImage().equals("no_image.png")) {
 //            imageService.deleteImageFromDir(ad.getImage());
@@ -171,7 +172,7 @@ public class AdServiceImpl implements AdService {
 //        ad.setImage(path);
 //        adRepository.save(ad);
 //        return path;
-        return null;
+        return "";
     }
 
     /**
