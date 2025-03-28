@@ -13,12 +13,12 @@ public interface AdService {
     Ads getAllAds();
     ExtendedAd getAd(Integer adId);
     Ads getAdsMe();
-    AdDto addAd(CreateOrUpdateAdDto properties, String image);
+//    AdDto addAd(CreateOrUpdateAdDto properties, MultipartFile image);
 
     AdDto addAd(CreateOrUpdateAdDto properties, MultipartFile file) throws IOException;
 
     AdDto updateAd(Integer adId, CreateOrUpdateAdDto properties);
-    String updateImage(Integer adId, String image);
+    String updateImage(Integer adId, MultipartFile image);
     void deleteAd(Integer adId);
     byte[] getAdImage(int id) throws IOException;
 
