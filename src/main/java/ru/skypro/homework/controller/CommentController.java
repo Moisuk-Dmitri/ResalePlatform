@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -120,8 +121,8 @@ public class CommentController {
     )
     @PreAuthorize(USER)
     @PostMapping("{id}/comments")
-    public ResponseEntity<CreateOrUpdateCommentDto> postComment(@PathVariable("id") int id, @RequestBody String text) {
-        return ResponseEntity.ok(commentService.postComment(id, text));
+    public ResponseEntity<CreateOrUpdateCommentDto> postComment(@PathVariable("id") int id, @RequestBody CreateOrUpdateCommentDto text) {
+        return ResponseEntity.ok(commentService.postComment(id, text.getText()));
     }
 
     /**
