@@ -25,6 +25,7 @@ import ru.skypro.homework.service.AdService;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import static ru.skypro.homework.security.RoleAuthority.ADMIN;
 import static ru.skypro.homework.security.RoleAuthority.USER;
@@ -79,7 +80,11 @@ public class AdsController {
     @PreAuthorize(USER)
     @GetMapping("ads")
     public ResponseEntity<Ads> getAll() {
-        return ResponseEntity.ok(adService.getAllAds());
+        Ads ads = adService.getAllAds();
+        ads.setResults(ads.getResults().stream()
+                .peek(ad -> ad.setImage("ads/images/" + ad.getPk()))
+                .toList());
+        return ResponseEntity.ok(ads);
     }
 
     /**
@@ -146,7 +151,9 @@ public class AdsController {
     @PreAuthorize(USER)
     @GetMapping("ads/{id}")
     public ResponseEntity<ExtendedAd> getAdInfo(@PathVariable("id") Integer id) {
-        return ResponseEntity.ok(adService.getAd(id));
+        ExtendedAd extendedAd = adService.getAd(id);
+        extendedAd.setImage("ads/images/" + extendedAd.getPk());
+        return ResponseEntity.ok(extendedAd);
     }
 
     /**
@@ -259,7 +266,11 @@ public class AdsController {
     })
     @GetMapping("ads/me")
     public ResponseEntity<Ads> getUsersAds() {
-        return ResponseEntity.ok(adService.getAdsMe());
+        Ads ads = adService.getAdsMe();
+        ads.setResults(ads.getResults().stream()
+                .peek(ad -> ad.setImage("ads/images/" + ad.getPk()))
+                .toList());
+        return ResponseEntity.ok(ads);
     }
 
     /**

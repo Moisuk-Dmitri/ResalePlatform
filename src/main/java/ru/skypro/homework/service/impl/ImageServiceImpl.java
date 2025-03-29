@@ -5,8 +5,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.model.Ad;
 import ru.skypro.homework.model.User;
+import ru.skypro.homework.repository.AdRepository;
+import ru.skypro.homework.repository.UserRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,9 +25,16 @@ public class ImageServiceImpl {
 
     public ResponseEntity<byte[]> getImageAsBytes;
 
+    private UserRepository userRepository;
+    private AdRepository adRepository;
+
     @Value("${image.path}")
     private String path;
 
+    public ImageServiceImpl(UserRepository userRepository, AdRepository adRepository) {
+        this.userRepository = userRepository;
+        this.adRepository = adRepository;
+    }
 
     public String updateImage(MultipartFile image) {
 
@@ -68,7 +78,7 @@ public class ImageServiceImpl {
     }
 
     public byte[] getUserImage(User user) throws IOException {
-        Path imagePath = Paths.get(path, user.getImage());
+        Path imagePath = Paths.get(path, userRepository.findById(user.getId()).orElseThrow(() -> new UserNotFoundException(user.getEmail())).getImage());
         return Files.readAllBytes(imagePath);
     }
 

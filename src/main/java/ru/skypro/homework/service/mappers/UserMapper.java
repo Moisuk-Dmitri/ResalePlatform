@@ -1,7 +1,9 @@
 package ru.skypro.homework.service.mappers;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.springframework.beans.factory.annotation.Value;
 import ru.skypro.homework.dto.user.*;
 import ru.skypro.homework.model.User;
 
@@ -15,23 +17,18 @@ public interface UserMapper {
     @Mapping(source = "username", target = "email")
     User RegisterDtoToUser(RegisterDto registerDto);
 
-    @Mapping(source = "password",target = "currentPassword")
+    @Mapping(source = "password", target = "currentPassword")
     SetPasswordDto userToSetPasswordDto(User user);
 
-    void updateUserFromUpdateUserDto(UpdateUserDto updateUserDto,@MappingTarget User user);
+    void updateUserFromUpdateUserDto(UpdateUserDto updateUserDto, @MappingTarget User user);
 
     UpdateUserDto userToUpdateDto(User user);
 
     UserDto userToUserDto(User user);
 
-
     GetUserDto userToGetUserDto(User user);
 
-   UpdateUserDto userToUpdateUserDto(User user);
-
-
-
-
+    UpdateUserDto userToUpdateUserDto(User user);
 
 
 }

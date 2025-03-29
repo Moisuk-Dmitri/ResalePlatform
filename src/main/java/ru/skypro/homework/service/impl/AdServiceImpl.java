@@ -101,11 +101,6 @@ public class AdServiceImpl implements AdService {
         }
     }
 
-//    @Override
-//    public AdDto addAd(CreateOrUpdateAdDto properties, MultipartFile image) {
-//        return null;
-//    }
-
     /**
      * Add
      *

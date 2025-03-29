@@ -44,9 +44,9 @@ public class UsersController {
      * The endpoint for password updating
      *
      * @param setPassword User's DTO for the password updating
-     * HTTP 200 (OK): password updating successful
-     * HTTP 401 (Unauthorized): if authentication fails.
-     * HTTP 403 (Forbidden): password updating declined
+     *                    HTTP 200 (OK): password updating successful
+     *                    HTTP 401 (Unauthorized): if authentication fails.
+     *                    HTTP 403 (Forbidden): password updating declined
      */
     @Operation(
             tags = "Пользователи",
@@ -73,7 +73,8 @@ public class UsersController {
     )
     @PreAuthorize(USER)
     @PostMapping("/users/set_password")
-    public void setPassword(@RequestBody SetPasswordDto setPassword) {usersService.setPassword(setPassword);
+    public void setPassword(@RequestBody SetPasswordDto setPassword) {
+        usersService.setPassword(setPassword);
     }
 
     /**
@@ -105,7 +106,11 @@ public class UsersController {
     )
     @PreAuthorize(USER)
     @GetMapping("/users/me")
-    public ResponseEntity<GetUserDto> getUser() {return ResponseEntity.ok(usersService.getAuthorizedUserInfo()) ;}
+    public ResponseEntity<GetUserDto> getUser() {
+        GetUserDto getUserDto = usersService.getAuthorizedUserInfo();
+        getUserDto.setImage("/users/images/" + usersService.getAuthorizedUserInfo().getId());
+        return ResponseEntity.ok(getUserDto);
+    }
 
     /**
      * Updating information about the authorized user
@@ -138,7 +143,8 @@ public class UsersController {
             }
     )
     @PreAuthorize(USER)
-    public UserDto updateUser(@RequestBody UpdateUserDto updateUserDto) {return usersService.updateUserInfo(updateUserDto);
+    public UserDto updateUser(@RequestBody UpdateUserDto updateUserDto) {
+        return usersService.updateUserInfo(updateUserDto);
     }
 
     /**
@@ -168,7 +174,7 @@ public class UsersController {
     )
     @PreAuthorize(USER)
     @PatchMapping(value = "/users/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateUserImage(@RequestParam("image") MultipartFile file)  {
+    public ResponseEntity<?> updateUserImage(@RequestParam("image") MultipartFile file) {
         usersService.updateUserImage(file);
         return ResponseEntity.ok().build();
     }
