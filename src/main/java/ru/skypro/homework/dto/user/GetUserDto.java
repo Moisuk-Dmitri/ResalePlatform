@@ -3,6 +3,7 @@ package ru.skypro.homework.dto.user;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.skypro.homework.dto.Role;
 
 
 /**
@@ -18,7 +19,7 @@ public class GetUserDto {
         private String firstName;
         private String lastName;
         private String phone;
-        private String role;
+        private Role role;
         private String image;
     }
 
