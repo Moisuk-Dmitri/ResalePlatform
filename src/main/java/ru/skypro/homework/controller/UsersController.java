@@ -71,7 +71,6 @@ public class UsersController {
 
             }
     )
-    @PreAuthorize(USER)
     @PostMapping("/users/set_password")
     public void setPassword(@RequestBody SetPasswordDto setPassword) {
         usersService.setPassword(setPassword);
@@ -104,7 +103,6 @@ public class UsersController {
             }
 
     )
-    @PreAuthorize(USER)
     @GetMapping("/users/me")
     public ResponseEntity<GetUserDto> getUser() {
         return ResponseEntity.ok(usersService.getAuthorizedUserInfo());
@@ -140,7 +138,6 @@ public class UsersController {
                             description = "Unauthorized")
             }
     )
-    @PreAuthorize(USER)
     public UserDto updateUser(@RequestBody UpdateUserDto updateUserDto) {
         return usersService.updateUserInfo(updateUserDto);
     }
@@ -170,7 +167,6 @@ public class UsersController {
                             description = "Unauthorized")
             }
     )
-    @PreAuthorize(USER)
     @PatchMapping(value = "/users/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateUserImage(@RequestParam("image") MultipartFile file) {
         usersService.updateUserImage(file);

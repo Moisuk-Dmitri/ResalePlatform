@@ -69,7 +69,6 @@ public class CommentController {
 
 
     )
-    @PreAuthorize(USER)
     @GetMapping("{id}/comments")
     public ResponseEntity<CommentsDto> getComments(@PathVariable("id") int id) {
         return ResponseEntity.ok(commentService.getComments(id));
@@ -119,7 +118,6 @@ public class CommentController {
 
 
     )
-    @PreAuthorize(USER)
     @PostMapping("{id}/comments")
     public ResponseEntity<CreateOrUpdateCommentDto> postComment(@PathVariable("id") int id, @RequestBody CreateOrUpdateCommentDto text) {
         return ResponseEntity.ok(commentService.postComment(id, text.getText()));
@@ -172,7 +170,6 @@ public class CommentController {
 
 
     )
-    @PreAuthorize(USER + " or " + ADMIN)
     @DeleteMapping("{adId}/comments/{commentId}")
     public void deleteComment(@PathVariable("adId") int adId, @PathVariable("commentId") int commentId) {
         commentService.deleteComment(adId, commentId);
@@ -232,7 +229,6 @@ public class CommentController {
 
 
     )
-    @PreAuthorize(USER + " or " + ADMIN)
     @PatchMapping("{adId}/comments/{commentId}")
     public ResponseEntity<CreateOrUpdateCommentDto> patchComment(@PathVariable("adId") int adId, @PathVariable("commentId") int commentId, @RequestBody String text) {
         return ResponseEntity.ok(commentService.patchComment(adId, commentId, text));

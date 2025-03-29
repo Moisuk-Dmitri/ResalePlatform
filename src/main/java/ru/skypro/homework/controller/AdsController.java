@@ -77,7 +77,6 @@ public class AdsController {
                     array = @ArraySchema(schema = @Schema(implementation = Ads.class))
             )
     )
-    @PreAuthorize(USER)
     @GetMapping("ads")
     public ResponseEntity<Ads> getAll() {
         Ads ads = adService.getAllAds();
@@ -109,7 +108,6 @@ public class AdsController {
                     schema = @Schema(implementation = AdDto.class)
             )
     )
-    @PreAuthorize(USER)
     @PostMapping(value = "ads", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
     public ResponseEntity<AdDto> createAd(@RequestPart CreateOrUpdateAdDto properties, @RequestPart MultipartFile image) throws IOException {
         return ResponseEntity.ok(adService.addAd(properties, image));
@@ -148,7 +146,6 @@ public class AdsController {
                     description = "Not found"
             )
     })
-    @PreAuthorize(USER)
     @GetMapping("ads/{id}")
     public ResponseEntity<ExtendedAd> getAdInfo(@PathVariable("id") Integer id) {
         ExtendedAd extendedAd = adService.getAd(id);
@@ -187,7 +184,6 @@ public class AdsController {
                     description = "Not found"
             )
     })
-    @PreAuthorize(USER + " or " + ADMIN)
     @DeleteMapping("ads/{id}")
     public void deleteAd(@PathVariable Integer id) {
         adService.deleteAd(id);

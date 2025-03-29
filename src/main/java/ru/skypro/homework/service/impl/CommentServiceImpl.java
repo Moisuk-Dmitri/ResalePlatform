@@ -76,7 +76,12 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void deleteComment(int adId, int commentId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+        boolean permission = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName())).getId()
+                == commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException(commentId)).getAuthor().getId();
+
+        if ((authentication.getAuthorities().stream()
+                .anyMatch(r -> r.getAuthority().equals("ROLE_ADMIN")) || permission) &&
+                !(authentication instanceof AnonymousAuthenticationToken)) {
             commentRepository.deleteByAdPkAndPk(adId, commentId);
         } else {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
