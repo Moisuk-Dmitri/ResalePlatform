@@ -87,8 +87,8 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public GetUserDto getAuthorizedUserInfo() {
         log.info("Request authorized user's info {}", getAuthorizedUser().getEmail());
-        log.info(mapper.userToGetUserDto(getAuthorizedUser()).toString());
-        return mapper.userToGetUserDto(getAuthorizedUser());
+        log.info(mapper.userToGetUserDto(getAuthorizedUser(), "/users/images/").toString());
+        return mapper.userToGetUserDto(getAuthorizedUser(), "/users/images/");
     }
 
     /**

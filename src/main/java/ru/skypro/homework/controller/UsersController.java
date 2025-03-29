@@ -107,9 +107,7 @@ public class UsersController {
     @PreAuthorize(USER)
     @GetMapping("/users/me")
     public ResponseEntity<GetUserDto> getUser() {
-        GetUserDto getUserDto = usersService.getAuthorizedUserInfo();
-        getUserDto.setImage("/users/images/" + usersService.getAuthorizedUserInfo().getId());
-        return ResponseEntity.ok(getUserDto);
+        return ResponseEntity.ok(usersService.getAuthorizedUserInfo());
     }
 
     /**

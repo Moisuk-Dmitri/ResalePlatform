@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.Nullable;
 import ru.skypro.homework.dto.user.*;
 import ru.skypro.homework.model.User;
 
@@ -26,7 +27,8 @@ public interface UserMapper {
 
     UserDto userToUserDto(User user);
 
-    GetUserDto userToGetUserDto(User user);
+    @Mapping(target = "image", expression = "java(path + user.getId())")
+    GetUserDto userToGetUserDto(User user, String path);
 
     UpdateUserDto userToUpdateUserDto(User user);
 

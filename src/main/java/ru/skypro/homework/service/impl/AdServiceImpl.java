@@ -52,7 +52,7 @@ public class AdServiceImpl implements AdService {
     @Override
     public Ads getAllAds() {
         List<AdDto> ads = adRepository.findAll().stream()
-                .map(adMapper::adToAdDto)
+                .map(ad -> adMapper.adToAdDto(ad, "/ads/images/"))
                 .toList();
         if (ads.isEmpty()) {
             throw new NoAdsExistException();
@@ -72,7 +72,7 @@ public class AdServiceImpl implements AdService {
      */
     @Override
     public ExtendedAd getAd(Integer adId) {
-        return adMapper.adToExtendedAd(adRepository.findById(adId).orElseThrow(() -> new AdNotFoundException(adId)));
+        return adMapper.adToExtendedAd(adRepository.findById(adId).orElseThrow(() -> new AdNotFoundException(adId)), "/ads/images/");
     }
 
     /**
@@ -86,7 +86,7 @@ public class AdServiceImpl implements AdService {
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             User user = userRepository.findByEmail(authentication.getName()).orElseThrow(() -> new UserNotFoundException(authentication.getName()));
             List<AdDto> ads = adRepository.findAllByAuthorId(user.getId()).orElseThrow(() -> new UserNotFoundException(authentication.getName())).stream()
-                    .map(adMapper::adToAdDto)
+                    .map(ad -> adMapper.adToAdDto(ad, "/ads/images/"))
                     .toList();
             if (ads.isEmpty()) {
                 throw new NoAdsExistException();
@@ -122,7 +122,7 @@ public class AdServiceImpl implements AdService {
 
             adRepository.save(ad);
             log.info("Ad {} {} saved", ad.getPk(), ad.getTitle());
-            return adMapper.adToAdDto(ad);
+            return adMapper.adToAdDto(ad, "/ads/images/");
         } else {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED);
         }
@@ -145,7 +145,7 @@ public class AdServiceImpl implements AdService {
         ad.setPrice(properties.getPrice());
         ad.setDescription(properties.getDescription());
         adRepository.save(ad);
-        return adMapper.adToAdDto(ad);
+        return adMapper.adToAdDto(ad, "/ads/images/");
     }
 
     /**
