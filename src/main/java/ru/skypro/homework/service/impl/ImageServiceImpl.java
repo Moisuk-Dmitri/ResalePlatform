@@ -26,40 +26,43 @@ public class ImageServiceImpl {
     private String path;
 
 
-    public String updateImage(MultipartFile image)  {
+    public String updateImage(MultipartFile image) {
+
 
         Path imagePath = Paths.get(path);
-
         try {
-            Files.createDirectories(Paths.get(path)); //create directory for images
-        }catch (Exception e){
+            createDirectoryIfNotExist(); //  create directory with replacing old image
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        String imageName = UUID.randomUUID()+"-" + image.getOriginalFilename(); //create name for new image
+        String imageName = UUID.randomUUID() + "-" + image.getOriginalFilename(); //create name for new image
 
-        Path filePath = imagePath.resolve(imageName); // create final path with created image name
+        Path filePath = Path.of(imagePath.toString(), imageName); // create final path with created image name
         try {
-            Files.copy(image.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING); // copy image to created directory with replacing old image
-        }catch (Exception e){
+            image.transferTo(filePath); // copy image to created directory with replacing old image
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return imageName;
     }
 
-    public void deleteUserImage(User user)  {
-        Path imagePath = Paths.get(path, user.getImage());
+    public void deleteUserImage(User user) {
+        Path imagePath = Paths.get(path);
+        Path finalImagePath = Path.of(imagePath.toString(), user.getImage());
         try {
-            Files.deleteIfExists(imagePath);
-        }catch (Exception e) {
+            Files.deleteIfExists(finalImagePath);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void deleteAdImage(Ad ad)  {
-        Path imagePath = Paths.get(path, ad.getImage());
+    public void deleteAdImage(Ad ad) {
+        Path imagePath = Paths.get(path);
+        Path finalImagePath = Path.of(imagePath.toString(), ad.getImage());
+        ;
         try {
-            Files.deleteIfExists(imagePath);
-        }catch (Exception e) {
+            Files.deleteIfExists(finalImagePath);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -72,6 +75,12 @@ public class ImageServiceImpl {
     public byte[] getAdImage(Ad ad) throws IOException {
         Path imagePath = Paths.get(path, ad.getImage());
         return Files.readAllBytes(imagePath);
+    }
+
+    private void createDirectoryIfNotExist() throws IOException {
+        if (Files.notExists(Paths.get(path))) {
+            Files.createDirectory(Paths.get(path));
+        }
     }
 
 }
